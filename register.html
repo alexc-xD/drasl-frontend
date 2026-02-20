@@ -13,41 +13,43 @@
             <span>Minecraft Auth</span>
         </div>
         <nav class="header-nav">
-            <a href="index.html">Home</a>
-            <a href="login.html" class="auth-link">Login</a>
-            <a href="register.html" class="auth-link">Register</a>
+            <a href="index.html" data-i18n="Home">Home</a>
+            <a href="login.html" class="auth-link" data-i18n="Login">Login</a>
+            <a href="register.html" class="auth-link" data-i18n="Register">Register</a>
         </nav>
     </header>
 
     <main class="main">
-        <h1>Register</h1>
+        <h1 data-i18n="Register">Register</h1>
 
         <div class="error-message"></div>
         <div class="success-message"></div>
 
         <form id="register-form">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
+                <label for="username" data-i18n="Username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username" data-i18n-placeholder="Username">
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="new-password">
+                <label for="password" data-i18n="Password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password" data-i18n-placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" name="confirm-password" required autocomplete="new-password">
+                <label for="confirm-password" data-i18n="Confirm Password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required autocomplete="new-password" data-i18n-placeholder="Confirm Password">
             </div>
-            <button type="submit">Register</button>
+            <button type="submit" data-i18n="Register">Register</button>
         </form>
 
         <div class="form-links">
-            <a href="login.html">Already have an account? Login</a>
+            <a href="login.html" data-i18n="Already have an account? Login">Already have an account? Login</a>
         </div>
     </main>
 
     <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/main.js"></script>
+    <script>I18n.init();</script>
 </body>
 </html>

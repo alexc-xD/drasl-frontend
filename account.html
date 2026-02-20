@@ -13,40 +13,226 @@
             <span>Minecraft Auth</span>
         </div>
         <nav class="header-nav">
-            <a href="index.html">Home</a>
-            <a href="account.html">Account</a>
-            <a href="#" id="logout-btn" class="auth-link">Logout</a>
+            <a href="/" data-i18n="Home">Home</a>
+            <a href="/account" data-i18n="Account">Account</a>
+            <a href="#" id="logout-btn" class="auth-link" data-i18n="Logout">Logout</a>
         </nav>
     </header>
 
     <main class="main">
-        <h1>Account</h1>
+        <h1 id="page-title" data-i18n="Account">Account</h1>
 
         <div class="error-message"></div>
         <div class="success-message"></div>
 
-        <div class="card">
-            <h3>Change Password</h3>
-            <form id="password-form">
+        <div class="loading" id="loading" data-i18n="Loading...">Loading...</div>
+
+        <!-- Main content (hidden until loaded) -->
+        <div id="account-content" style="display: none;">
+
+            <!-- Players Section -->
+            <div class="card">
+                <h3 data-i18n="Your players">Your players</h3>
+                <div id="players-list"></div>
+                <div id="no-players" style="display: none;" data-i18n="No players yet.">No players yet.</div>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="card">
+                <h3 data-i18n="Account settings">Account settings</h3>
+                
                 <div class="form-group">
-                    <label for="old-password">Current Password</label>
-                    <input type="password" id="old-password" name="old-password" required autocomplete="current-password">
+                    <label data-i18n="Minecraft Token">Minecraft Token</label>
+                    <small data-i18n="Can be used instead of a password to sign in to Minecraft launchers.">Can be used instead of a password to sign in to Minecraft launchers.</small>
+                    <input type="text" id="minecraft-token" readonly class="long">
                 </div>
+
                 <div class="form-group">
-                    <label for="new-password">New Password</label>
-                    <input type="password" id="new-password" name="new-password" required autocomplete="new-password">
+                    <label data-i18n="API Token">API Token</label>
+                    <input type="text" id="api-token" readonly class="long">
                 </div>
+
                 <div class="form-group">
-                    <label for="confirm-new-password">Confirm New Password</label>
-                    <input type="password" id="confirm-new-password" name="confirm-new-password" required autocomplete="new-password">
+                    <label for="preferred-language" data-i18n="Preferred Language">Preferred Language</label>
+                    <select id="preferred-language">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="de">German</option>
+                        <option value="fr">French</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="ru">Russian</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                    </select>
                 </div>
-                <button type="submit">Change Password</button>
-            </form>
+
+                <button id="save-settings-btn" class="btn" data-i18n="Save changes">Save changes</button>
+            </div>
+
+            <!-- Change Password -->
+            <div class="card">
+                <h3 data-i18n="Change Password">Change Password</h3>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="password" data-i18n="New Password">New Password</label>
+                        <input type="password" id="password" name="password" placeholder="Leave blank to keep">
+                    </div>
+                    <button type="submit" data-i18n="Update Password">Update Password</button>
+                </form>
+            </div>
+
+            <!-- Delete Account -->
+            <div class="card danger-zone">
+                <details>
+                    <summary data-i18n="Delete Account">Delete Account</summary>
+                    <p data-i18n="Are you sure? This action is irreversible.">Are you sure? This action is irreversible.</p>
+                    <button id="delete-account-btn" class="btn btn-danger" data-i18n="Delete Account">Delete Account</button>
+                </details>
+            </div>
         </div>
     </main>
 
     <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        I18n.init();
+
+        let currentUser = null;
+
+        // Load user data on page load
+        (async () => {
+            currentUser = await DraslAPI.getCurrentUser();
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('account-content');
+
+            if (!currentUser) {
+                loading.textContent = T('Not logged in');
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1000);
+                return;
+            }
+
+            // Update page title
+            document.getElementById('page-title').textContent = currentUser.username;
+
+            // Populate players
+            const playersList = document.getElementById('players-list');
+            const noPlayers = document.getElementById('no-players');
+
+            if (currentUser.players && currentUser.players.length > 0) {
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <td colspan="2">${T('Player')}</td>
+                            <td>${T('UUID')}</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+
+                currentUser.players.forEach(player => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="width: 30px;">
+                            ${player.skinUrl ? `<img src="${player.skinUrl}" alt="skin" style="width: 24px; height: 24px; image-rendering: pixelated;">` : ''}
+                        </td>
+                        <td>${player.name}</td>
+                        <td><code>${player.uuid}</code></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                playersList.appendChild(table);
+            } else {
+                noPlayers.style.display = 'block';
+            }
+
+            // Populate tokens
+            document.getElementById('minecraft-token').value = currentUser.minecraftToken || '';
+            document.getElementById('api-token').value = currentUser.apiToken || '';
+
+            // Set preferred language
+            if (currentUser.preferredLanguage) {
+                document.getElementById('preferred-language').value = currentUser.preferredLanguage;
+            }
+
+            // Hide loading, show content
+            loading.style.display = 'none';
+            content.style.display = 'block';
+        })();
+
+        // Save settings
+        document.getElementById('save-settings-btn').addEventListener('click', async () => {
+            const preferredLanguage = document.getElementById('preferred-language').value;
+            
+            try {
+                const response = await DraslAPI.updateUser({
+                    uuid: currentUser.uuid,
+                    preferredLanguage: preferredLanguage,
+                    returnUrl: '/account',
+                });
+
+                if (response.ok || response.redirected) {
+                    UI.showSuccess('Settings saved');
+                } else {
+                    UI.showError('Failed to save settings');
+                }
+            } catch (e) {
+                UI.showError('Connection error. Please try again.');
+            }
+        });
+
+        // Update password
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+
+            if (!password) {
+                UI.showError('Please enter a new password');
+                return;
+            }
+
+            try {
+                const response = await DraslAPI.updateUser({
+                    uuid: currentUser.uuid,
+                    password: password,
+                    returnUrl: '/account',
+                });
+
+                if (response.ok || response.redirected) {
+                    UI.showSuccess('Password updated');
+                    document.getElementById('password').value = '';
+                } else {
+                    UI.showError('Failed to update password');
+                }
+            } catch (e) {
+                UI.showError('Connection error. Please try again.');
+            }
+        });
+
+        // Delete account
+        document.getElementById('delete-account-btn').addEventListener('click', async () => {
+            if (!confirm(T('Are you sure? This action is irreversible.'))) {
+                return;
+            }
+
+            try {
+                const response = await DraslAPI.deleteUser(currentUser.uuid);
+                if (response.ok || response.redirected) {
+                    window.location.href = '/';
+                } else {
+                    UI.showError('Failed to delete account');
+                }
+            } catch (e) {
+                UI.showError('Connection error. Please try again.');
+            }
+        });
+    </script>
 </body>
 </html>

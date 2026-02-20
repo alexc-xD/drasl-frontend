@@ -1,17 +1,17 @@
 // UI helpers
 const UI = {
-    showError(message) {
+    showError(key) {
         const errorEl = document.querySelector('.error-message');
         if (errorEl) {
-            errorEl.textContent = message;
+            errorEl.textContent = T(key);
             errorEl.style.display = 'block';
         }
     },
 
-    showSuccess(message) {
+    showSuccess(key) {
         const successEl = document.querySelector('.success-message');
         if (successEl) {
-            successEl.textContent = message;
+            successEl.textContent = T(key);
             successEl.style.display = 'block';
         }
     },
@@ -26,7 +26,7 @@ const UI = {
         if (loading) {
             button.disabled = true;
             button.dataset.originalText = button.textContent;
-            button.textContent = 'Loading...';
+            button.textContent = T('Loading...');
         } else {
             button.disabled = false;
             button.textContent = button.dataset.originalText || button.textContent;

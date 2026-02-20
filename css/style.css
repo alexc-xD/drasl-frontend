@@ -201,3 +201,97 @@ button[type="submit"]:disabled {
     vertical-align: middle;
     margin: 0 1rem;
 }
+
+/* Profile display */
+.profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #444;
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    color: #888;
+}
+
+.profile-value {
+    font-family: monospace;
+    color: #fff;
+}
+
+.loading {
+    color: #888;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead td {
+    font-weight: 600;
+    border-bottom: 1px solid #444;
+    padding: 0.5rem;
+}
+
+tbody td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #333;
+}
+
+tbody tr:hover {
+    background-color: #333;
+}
+
+code {
+    font-family: monospace;
+    font-size: 0.85em;
+    color: #9a98ff;
+}
+
+/* Long inputs */
+input.long {
+    font-family: monospace;
+    font-size: 0.85em;
+}
+
+/* Danger zone */
+.danger-zone {
+    border-color: #dc3545;
+}
+
+.danger-zone summary {
+    cursor: pointer;
+    color: #ff6b6b;
+}
+
+/* Small text */
+small {
+    display: block;
+    color: #888;
+    margin-bottom: 0.5rem;
+    font-size: 0.85em;
+}
+
+/* Select */
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: #f5f5f0;
+    font-size: 1rem;
+}
+
+select:focus {
+    outline: none;
+    border-color: #9a98ff;
+}
